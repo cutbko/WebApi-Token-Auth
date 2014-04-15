@@ -26,9 +26,9 @@ namespace TokenAuth
             return _storage.TryGetValue(token, out data);
         }
 
-        public bool TryAddTokenWithData(string token, dynamic data)
+        public void AddTokenWithData(string token, dynamic data)
         {
-            return _storage.TryAdd(token, data);
+            _storage.TryAdd(token, data);
         }
     }
 
@@ -36,6 +36,6 @@ namespace TokenAuth
     {
         bool TryGetTokenData(string token, out dynamic data);
 
-        bool TryAddTokenWithData(string token, dynamic data);
+        void AddTokenWithData(string token, dynamic data);
     }
 }

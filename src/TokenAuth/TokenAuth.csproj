@@ -54,7 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TokenAuth.cs" />
+    <Compile Include="TokenAuthController.cs" />
+    <Compile Include="TokenAutorizeAttribute.cs" />
     <Compile Include="TokenStorage.cs" />
   </ItemGroup>
   <ItemGroup>
