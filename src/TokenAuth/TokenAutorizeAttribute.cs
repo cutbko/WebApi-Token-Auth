@@ -21,7 +21,7 @@ namespace TokenAuth
 
         private bool TryAuthorize(HttpActionContext context)
         {
-            var controller = context.ControllerContext.Controller as TokenAuthController;
+            var controller = context.ControllerContext.Controller as TokenAuthApiController;
             if (controller == null)
             {
                 throw new InvalidOperationException("controller must be derived from TokenAuthController");

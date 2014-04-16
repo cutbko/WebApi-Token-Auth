@@ -4,7 +4,7 @@ using TokenAuth;
 
 namespace TestApp.Controllers
 {
-    public class TestController : TokenAuthController
+    public class TestApiController : TokenAuthApiController
     {
         [TokenAutorize]
         public IEnumerable<string> Get()

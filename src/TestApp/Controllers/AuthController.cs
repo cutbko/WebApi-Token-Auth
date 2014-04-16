@@ -10,15 +10,12 @@ using TokenAuth;
 
 namespace TestApp.Controllers
 {
-    public class AuthController : TokenAuthController
+    public class AuthApiController : TokenAuthApiController
     {
         [Route("login")]
         public HttpResponseMessage PostLogin()
         {
-            dynamic userData = new UserDataClass();
-            userData.Name = "name";
-
-            string loginToken = LoginToken(userData);
+            string loginToken = LoginToken(userData => userData.Name = "name");
 
             return Request.CreateResponse(HttpStatusCode.OK, loginToken);
         }
@@ -30,24 +27,6 @@ namespace TestApp.Controllers
             Logout();
 
             return Request.CreateResponse(HttpStatusCode.OK);
-        }
-
-        private class UserDataClass : DynamicObject
-        {
-            private readonly ConcurrentDictionary<string, object> _properties = 
-                         new ConcurrentDictionary<string, object>();
-
-            public override bool TryGetMember(GetMemberBinder binder, out object result)
-            {
-                return _properties.TryGetValue(binder.Name, out result);
-            }
-
-            public override bool TrySetMember(SetMemberBinder binder, object value)
-            {
-                _properties[binder.Name] = value;
-                return true;
-            }
-
         }
     }
 }
