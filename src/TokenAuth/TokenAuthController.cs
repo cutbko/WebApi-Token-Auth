@@ -10,10 +10,21 @@ namespace TokenAuth
         protected string LoginToken(dynamic userData)
         {
             string token = GenerateToken();
-            
+
+            userData.Token = token;
             TokenStorage.Instance.AddTokenWithData(token, userData);
 
             return token;
+        }
+
+        protected void Logout()
+        {
+            if (UserData == null || UserData.Token == null)
+            {
+                throw new InvalidOperationException("Logout action must be authorized");
+            }
+
+            TokenStorage.Instance.RemoveTokenAndData(UserData.Token);
         }
 
         private string GenerateToken()

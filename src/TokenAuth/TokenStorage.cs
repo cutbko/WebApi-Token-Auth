@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace TokenAuth
 {
@@ -30,12 +31,11 @@ namespace TokenAuth
         {
             _storage.TryAdd(token, data);
         }
-    }
 
-    public interface ITokenStorage
-    {
-        bool TryGetTokenData(string token, out dynamic data);
-
-        void AddTokenWithData(string token, dynamic data);
+        public void RemoveTokenAndData(string token)
+        {
+            dynamic _;
+            _storage.TryRemove(token, out _);
+        }
     }
 }

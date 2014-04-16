@@ -16,11 +16,20 @@ namespace TestApp.Controllers
         public HttpResponseMessage PostLogin()
         {
             dynamic userData = new UserDataClass();
-            userData.Name = "guf";
+            userData.Name = "name";
 
             string loginToken = LoginToken(userData);
 
             return Request.CreateResponse(HttpStatusCode.OK, loginToken);
+        }
+
+        [TokenAutorize]
+        [Route("logout")]
+        public HttpResponseMessage PostLogout()
+        {
+            Logout();
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         private class UserDataClass : DynamicObject
