@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Web.Http;
 
@@ -9,15 +10,20 @@ namespace TokenAuth
     {
         public dynamic UserData { get; set; }
 
-        protected string LoginToken(Action<dynamic> setUserData)
+        protected string LoginToken(Action<dynamic> setUserData, IEnumerable<string> roles = null)
         {
-            dynamic userData = new DynamicUserData();
-            setUserData(userData);
+            var tokenData = new TokenData
+                            {
+                                Roles = roles,
+                                UserData = new DynamicUserData()
+                            };
+
+            setUserData(tokenData.UserData);
 
             string token = GenerateToken();
-            userData.Token = token;
+            tokenData.UserData.Token = token;
 
-            TokenStorage.Instance.AddTokenWithData(token, userData);
+            TokenStorage.Instance.AddTokenWithData(token, tokenData);
 
             return token;
         }

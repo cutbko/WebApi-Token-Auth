@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 
 namespace TokenAuth
 {
@@ -9,8 +8,8 @@ namespace TokenAuth
         private static readonly Lazy<ITokenStorage> TokenStorageLazy =  
                             new Lazy<ITokenStorage>(() => new TokenStorage());
 
-        private readonly ConcurrentDictionary<string, dynamic> _storage = 
-                     new ConcurrentDictionary<string, dynamic>();
+        private readonly ConcurrentDictionary<string, TokenData> _storage = 
+                     new ConcurrentDictionary<string, TokenData>();
         
 
         internal static ITokenStorage Instance
@@ -22,19 +21,19 @@ namespace TokenAuth
         {
         }
 
-        public bool TryGetTokenData(string token, out dynamic data)
+        public bool TryGetTokenData(string token, out TokenData data)
         {
             return _storage.TryGetValue(token, out data);
         }
 
-        public void AddTokenWithData(string token, dynamic data)
+        public void AddTokenWithData(string token, TokenData data)
         {
             _storage.TryAdd(token, data);
         }
 
         public void RemoveTokenAndData(string token)
         {
-            dynamic _;
+            TokenData _;
             _storage.TryRemove(token, out _);
         }
     }

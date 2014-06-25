@@ -13,11 +13,30 @@ namespace TestApp.Controllers
     public class AuthApiController : TokenAuthApiController
     {
         [Route("login")]
-        public HttpResponseMessage PostLogin()
+        public HttpResponseMessage PostLogin([FromBody]string username)
         {
-            string loginToken = LoginToken(userData => userData.Name = "name");
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "username is not provided");
+            }
 
-            return Request.CreateResponse(HttpStatusCode.OK, loginToken);
+            if (username == "user")
+            {
+                string loginToken = LoginToken(userData => userData.Name = "user",
+                                               new[] { "user" });
+
+                return Request.CreateResponse(HttpStatusCode.OK, loginToken);
+            }
+
+            if (username == "admin")
+            {
+                string loginToken = LoginToken(userData => userData.Name = "admin",
+                                               new[] { "user", "admin" });
+
+                return Request.CreateResponse(HttpStatusCode.OK, loginToken);
+            }
+
+            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "incorect username");
         }
 
         [TokenAutorize]

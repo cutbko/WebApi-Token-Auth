@@ -11,6 +11,21 @@ namespace TokenAuth
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public class TokenAutorize : AuthorizationFilterAttribute
     {
+        private string[] _roles;
+
+        public string Roles
+        {
+            get { return string.Join(",", _roles); }
+
+            set
+            {
+                _roles = !string.IsNullOrWhiteSpace(value) ? value.Split(new [] {','}, StringSplitOptions.RemoveEmptyEntries)
+                                                                  .Select(role => role.Trim())
+                                                                  .ToArray()
+                                                           : null;
+            }
+        }
+
         public override void OnAuthorization(HttpActionContext context)
         {
             if (!TryAuthorize(context))
@@ -32,10 +47,18 @@ namespace TokenAuth
             {
                 string token = values.FirstOrDefault();
 
-                dynamic data;
+                TokenData data;
                 if (TokenStorage.Instance.TryGetTokenData(token, out data))
                 {
-                    controller.UserData = data;
+                    if (_roles != null)
+                    {
+                        if (data.Roles == null || !data.Roles.Intersect(_roles).Any())
+                        {
+                            return false;
+                        }
+                    }
+
+                    controller.UserData = data.UserData;
                     return true;
                 }
 

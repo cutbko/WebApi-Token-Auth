@@ -1,10 +1,10 @@
 ﻿namespace TokenAuth
 {
-    public interface ITokenStorage
+    internal interface ITokenStorage
     {
-        bool TryGetTokenData(string token, out dynamic data);
+        bool TryGetTokenData(string token, out TokenData data);
 
-        void AddTokenWithData(string token, dynamic data);
+        void AddTokenWithData(string token, TokenData data);
 
         void RemoveTokenAndData(string token);
     }
