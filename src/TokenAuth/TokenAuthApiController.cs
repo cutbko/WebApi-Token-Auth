@@ -38,6 +38,16 @@ namespace TokenAuth
             TokenStorage.Instance.RemoveTokenAndData(UserData.Token);
         }
 
+        protected void Kick(Func<dynamic, bool> predicate)
+        {
+            if (predicate == null)
+            {
+                throw new ArgumentNullException("predicate");
+            }
+
+            TokenStorage.Instance.RemoveTokenAndData(predicate);
+        }
+
         private string GenerateToken()
         {
             return Convert.ToBase64String(Guid.NewGuid().ToByteArray());

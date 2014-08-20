@@ -1,4 +1,6 @@
-﻿namespace TokenAuth
+﻿using System;
+
+namespace TokenAuth
 {
     internal interface ITokenStorage
     {
@@ -7,5 +9,7 @@
         void AddTokenWithData(string token, TokenData data);
 
         void RemoveTokenAndData(string token);
+
+        void RemoveTokenAndData(Func<dynamic, bool> predicate);
     }
 }

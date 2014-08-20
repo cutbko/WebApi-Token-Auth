@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace TokenAuth
 {
@@ -35,6 +36,15 @@ namespace TokenAuth
         {
             TokenData _;
             _storage.TryRemove(token, out _);
+        }
+
+        public void RemoveTokenAndData(Func<dynamic, bool> predicate)
+        {
+            foreach (var token in _storage.Where(item => predicate(item.Value))
+                                          .Select(item => item.Key))
+            {
+                RemoveTokenAndData(token);
+            }
         }
     }
 }

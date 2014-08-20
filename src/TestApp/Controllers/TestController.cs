@@ -8,6 +8,7 @@ namespace TestApp.Controllers
     [TokenAutorize]
     public class TestApiController : TokenAuthApiController
     {
+        [Route("test")]
         [TokenAutorize]
         public IEnumerable<string> Get()
         {
@@ -25,6 +26,12 @@ namespace TestApp.Controllers
                    {
                        UserData.Name
                    };
+        }
+
+        [Route("kickAll")]
+        public void KickAll()
+        {
+            Kick(_ => true);
         } 
     }
 }
