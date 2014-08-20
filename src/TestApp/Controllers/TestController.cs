@@ -31,7 +31,7 @@ namespace TestApp.Controllers
         [Route("kickAll")]
         public void KickAll()
         {
-            Kick(_ => true);
+            Kick(tokenData => tokenData.Name == "user");
         } 
     }
 }

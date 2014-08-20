@@ -40,7 +40,7 @@ namespace TokenAuth
 
         public void RemoveTokenAndData(Func<dynamic, bool> predicate)
         {
-            foreach (var token in _storage.Where(item => predicate(item.Value))
+            foreach (var token in _storage.Where(item => predicate(item.Value.UserData))
                                           .Select(item => item.Key))
             {
                 RemoveTokenAndData(token);
