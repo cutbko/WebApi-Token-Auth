@@ -11,5 +11,6 @@ namespace TokenAuth
         void RemoveTokenAndData(string token);
 
         void RemoveTokenAndData(Func<dynamic, bool> predicate);
+        bool Contains(Func<object, bool> predicate);
     }
 }

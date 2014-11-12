@@ -48,6 +48,16 @@ namespace TokenAuth
             TokenStorage.Instance.RemoveTokenAndData(predicate);
         }
 
+        protected bool IsOnline(Func<dynamic, bool> predicate)
+        {
+            if (predicate == null)
+            {
+                throw new ArgumentNullException("predicate");
+            }
+
+            return TokenStorage.Instance.Contains(predicate);
+        }
+
         private string GenerateToken()
         {
             return Convert.ToBase64String(Guid.NewGuid().ToByteArray());

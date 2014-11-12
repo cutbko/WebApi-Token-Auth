@@ -32,6 +32,7 @@ namespace TestApp.Controllers
         public void KickAll()
         {
             Kick(tokenData => tokenData.Name == "user");
+            IsOnline(tokenData => tokenData.Name == "user");
         } 
     }
 }

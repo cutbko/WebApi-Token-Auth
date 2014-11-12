@@ -46,5 +46,10 @@ namespace TokenAuth
                 RemoveTokenAndData(token);
             }
         }
+
+        public bool Contains(Func<object, bool> predicate)
+        {
+            return _storage.Any(item => predicate(item.Value.UserData));
+        }
     }
 }
