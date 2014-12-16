@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Web;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http.Controllers;
@@ -12,6 +14,7 @@ namespace TokenAuth
     public class TokenAutorize : AuthorizationFilterAttribute
     {
         private string[] _roles;
+        private TokenSource _tokenSource = TokenSource.RequestHeader;
 
         public string Roles
         {
@@ -24,6 +27,12 @@ namespace TokenAuth
                                                                   .ToArray()
                                                            : null;
             }
+        }
+
+        public TokenSource TokenSource
+        {
+            get { return _tokenSource; }
+            set { _tokenSource = value; }
         }
 
         public override void OnAuthorization(HttpActionContext context)
@@ -42,30 +51,60 @@ namespace TokenAuth
                 throw new InvalidOperationException("controller must be derived from TokenAuthController");
             }
 
-            IEnumerable<string> values;
-            if (context.Request.Headers.TryGetValues("auth-token", out values))
-            {
-                string token = values.FirstOrDefault();
+            string token = null;
 
-                TokenData data;
-                if (TokenStorage.Instance.TryGetTokenData(token, out data))
+            if (TokenSource == TokenSource.RequestHeader)
+            {
+                IEnumerable<string> values;
+                if (context.Request.Headers.TryGetValues("auth-token", out values))
                 {
-                    if (_roles != null)
+                    token = values.FirstOrDefault();
+                }
+            }
+            else if (TokenSource == TokenSource.QueryString)
+            {
+                NameValueCollection queryString = HttpContext.Current.Request.QueryString;
+
+                if (queryString.HasKeys())
+                {
+                    for (int i = 0; i < queryString.Count; i++)
                     {
-                        if (data.Roles == null || !data.Roles.Intersect(_roles).Any())
+                        if (queryString.Keys[i].ToLower() == "auth-token")
                         {
-                            return false;
+                            token = queryString[queryString.Keys[i]];
+                            break;
                         }
                     }
+                }
+            }
 
-                    controller.UserData = data.UserData;
-                    return true;
+            if (token == null)
+            {
+                return false;
+            }
+
+            TokenData data;
+            if (TokenStorage.Instance.TryGetTokenData(token, out data))
+            {
+                if (_roles != null)
+                {
+                    if (data.Roles == null || !data.Roles.Intersect(_roles).Any())
+                    {
+                        return false;
+                    }
                 }
 
-                return false;
+                controller.UserData = data.UserData;
+                return true;
             }
 
             return false;
         }
+    }
+
+    public enum TokenSource
+    {
+        RequestHeader,
+        QueryString
     }
 }

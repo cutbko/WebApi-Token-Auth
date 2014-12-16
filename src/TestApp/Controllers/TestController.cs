@@ -33,6 +33,13 @@ namespace TestApp.Controllers
         {
             Kick(tokenData => tokenData.Name == "user");
             IsOnline(tokenData => tokenData.Name == "user");
+        }
+
+        [Route("testQueryAuth")]
+        [TokenAutorize(TokenSource = TokenSource.QueryString)]
+        public string QueryAuth()
+        {
+            return UserData.Name;
         } 
     }
 }
