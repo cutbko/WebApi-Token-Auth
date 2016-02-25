@@ -40,6 +40,14 @@ namespace TestApp.Controllers
         public string QueryAuth()
         {
             return UserData.Name;
-        } 
+        }
+
+        [Route("testQueryAuthWithSite")]
+        [HttpGet]
+        [TokenAutorize(TokenSource = TokenSource.QueryString, SitePart = "testQueryAuthWithSite")]
+        public string QueryAuthWithSite()
+        {
+            return UserData.Name;
+        }
     }
 }

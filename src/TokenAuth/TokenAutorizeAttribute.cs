@@ -29,6 +29,8 @@ namespace TokenAuth
             }
         }
 
+        public string SitePart { get; set; }
+
         public TokenSource TokenSource
         {
             get { return _tokenSource; }
@@ -53,10 +55,17 @@ namespace TokenAuth
 
             string token = null;
 
+            string tempToken = null;
+
             if (TokenSource == TokenSource.RequestHeader)
             {
                 IEnumerable<string> values;
                 if (context.Request.Headers.TryGetValues("auth-token", out values))
+                {
+                    token = values.FirstOrDefault();
+                }
+
+                if (context.Request.Headers.TryGetValues("temp-auth-token", out values))
                 {
                     token = values.FirstOrDefault();
                 }
@@ -69,22 +78,27 @@ namespace TokenAuth
                 {
                     for (int i = 0; i < queryString.Count; i++)
                     {
+                        if (queryString.Keys[i].ToLower() == "temp-auth-token")
+                        {
+                            tempToken = queryString[queryString.Keys[i]];
+                        }
+                        
                         if (queryString.Keys[i].ToLower() == "auth-token")
                         {
                             token = queryString[queryString.Keys[i]];
-                            break;
                         }
                     }
                 }
             }
 
-            if (token == null)
+            if (token == null && tempToken == null)
             {
                 return false;
             }
 
             TokenData data;
-            if (TokenStorage.Instance.TryGetTokenData(token, out data))
+            if (token != null && TokenStorage.Instance.TryGetTokenData(token, out data)
+             || tempToken != null && TokenStorage.Instance.TryGetTokenDataBySingleTimeTokenAndSitePart(tempToken, SitePart, out data))
             {
                 if (_roles != null)
                 {

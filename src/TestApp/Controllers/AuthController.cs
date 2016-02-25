@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using TokenAuth;
@@ -38,6 +33,27 @@ namespace TestApp.Controllers
 
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "incorect username");
         }
+
+
+        [Route("loginTemp")]
+        [HttpGet]
+        public HttpResponseMessage GetLogin([FromUri]string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "username is not provided");
+            }
+
+
+            string loginToken = LoginToken(userData => userData.Name = "user",
+                                           new[] { "user" });
+
+            string tempToken = SingleTimeTokenForSitePart(loginToken, "testQueryAuthWithSite");
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { loginToken, tempToken });
+        }
+
+
 
         [TokenAutorize]
         [Route("logout")]

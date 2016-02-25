@@ -11,6 +11,9 @@ namespace TokenAuth
 
         private readonly ConcurrentDictionary<string, TokenData> _storage = 
                      new ConcurrentDictionary<string, TokenData>();
+
+        private readonly ConcurrentDictionary<Tuple<string, string>, string> _tempTokensStorage =
+                     new ConcurrentDictionary<Tuple<string, string>, string>();
         
 
         internal static ITokenStorage Instance
@@ -50,6 +53,23 @@ namespace TokenAuth
         public bool Contains(Func<object, bool> predicate)
         {
             return _storage.Any(item => predicate(item.Value.UserData));
+        }
+
+        public string CreateSingleTimeTokenForSitePart(string token, string sitePart)
+        {
+            string singleTimeToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+
+            _tempTokensStorage.TryAdd(Tuple.Create(singleTimeToken, sitePart), token);
+
+            return singleTimeToken;
+        }
+
+        public bool TryGetTokenDataBySingleTimeTokenAndSitePart(string singleTimeToken, string sitePart, out TokenData data)
+        {
+            string token;
+            data = null;
+
+            return _tempTokensStorage.TryRemove(Tuple.Create(singleTimeToken, sitePart), out token) && TryGetTokenData(token, out data);
         }
     }
 }

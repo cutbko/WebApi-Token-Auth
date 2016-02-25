@@ -11,6 +11,11 @@ namespace TokenAuth
         void RemoveTokenAndData(string token);
 
         void RemoveTokenAndData(Func<dynamic, bool> predicate);
+
         bool Contains(Func<object, bool> predicate);
+
+        string CreateSingleTimeTokenForSitePart(string token, string sitePart);
+
+        bool TryGetTokenDataBySingleTimeTokenAndSitePart(string singleTimeToken, string sitePart, out TokenData data);
     }
 }

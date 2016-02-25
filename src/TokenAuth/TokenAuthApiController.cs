@@ -28,6 +28,11 @@ namespace TokenAuth
             return token;
         }
 
+        protected string SingleTimeTokenForSitePart(string token, string sitePart)
+        {
+            return TokenStorage.Instance.CreateSingleTimeTokenForSitePart(token, sitePart);
+        }
+
         protected void Logout()
         {
             if (UserData == null || UserData.Token == null)
