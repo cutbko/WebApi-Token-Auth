@@ -20,7 +20,7 @@ namespace TokenAuth
 
             setUserData(tokenData.UserData);
 
-            string token = GenerateToken();
+            string token = TokenStorage.GenerateRandomToken();
             tokenData.UserData.Token = token;
 
             TokenStorage.Instance.AddTokenWithData(token, tokenData);
@@ -61,11 +61,6 @@ namespace TokenAuth
             }
 
             return TokenStorage.Instance.Contains(predicate);
-        }
-
-        private string GenerateToken()
-        {
-            return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         }
 
         private class DynamicUserData : DynamicObject

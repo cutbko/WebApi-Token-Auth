@@ -21,8 +21,9 @@ namespace TokenAuth
             get { return TokenStorageLazy.Value; }
         }
 
-        internal TokenStorage()
+        internal static string GenerateRandomToken()
         {
+            return new string((Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + Convert.ToBase64String(Guid.NewGuid().ToByteArray())).Where(char.IsLetterOrDigit).ToArray());
         }
 
         public bool TryGetTokenData(string token, out TokenData data)
@@ -57,7 +58,7 @@ namespace TokenAuth
 
         public string CreateSingleTimeTokenForSitePart(string token, string sitePart)
         {
-            string singleTimeToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            string singleTimeToken = GenerateRandomToken();
 
             _tempTokensStorage.TryAdd(Tuple.Create(singleTimeToken, sitePart), token);
 
