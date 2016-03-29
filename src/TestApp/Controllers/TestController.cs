@@ -18,6 +18,17 @@ namespace TestApp.Controllers
                    };
         }
 
+        [Route("testAnonymous")]
+        [AllowAnonymous]
+        [TokenAutorize]
+        public IEnumerable<string> GetAnonimous()
+        {
+            return new List<string>
+                   {
+                       "UserData is null - " + (UserData == null)
+                   };
+        }
+
         [TokenAutorize(Roles = "admin")]
         [Route("admin")]
         public IEnumerable<string> Admin()

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Net;
 using System.Net.Http;
+using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
@@ -53,6 +54,8 @@ namespace TokenAuth
                 throw new InvalidOperationException("controller must be derived from TokenAuthController");
             }
 
+            bool result = context.ActionDescriptor.GetCustomAttributes<AllowAnonymousAttribute>().Any();
+
             string token = null;
 
             string tempToken = null;
@@ -93,7 +96,7 @@ namespace TokenAuth
 
             if (token == null && tempToken == null)
             {
-                return false;
+                return result;
             }
 
             TokenData data;
@@ -104,15 +107,15 @@ namespace TokenAuth
                 {
                     if (data.Roles == null || !data.Roles.Intersect(_roles).Any())
                     {
-                        return false;
+                        return result;
                     }
                 }
 
                 controller.UserData = data.UserData;
-                return true;
+                result = true;
             }
 
-            return false;
+            return result;
         }
     }
 
